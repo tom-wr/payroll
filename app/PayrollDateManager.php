@@ -35,12 +35,12 @@ class PayrollDateManager
         // Get last date of the month
         $salaryDate = date('Y-m-t', strtotime($initialDate));
         // Get the weekday the last day of the month falls on
-        $weekday = date('l', strtotime($salaryDate));
+        $weekday = date('w', strtotime($salaryDate));
 
         // If the weekday is a weekend offset the salary day accordingly
-        if ($weekday === 'Sunday') {
+        if ($weekday === '0') { // 0 == Sunday
             $salaryDate = date('Y-m-d', strtotime($salaryDate . '-2 day'));
-        } else if ($weekday === 'Saturday') {
+        } else if ($weekday === '6') { // 6 == Saturday
             $salaryDate = date('Y-m-d', strtotime($salaryDate . '-1 day'));
         }
         return $salaryDate;
@@ -59,12 +59,12 @@ class PayrollDateManager
         $initialDate = $this->formatDate($this->year, $month, $day);
         $expensesDate = date('Y-m-d', strtotime($initialDate));
         // Get the weekday the expenses date falls upon
-        $weekday = date('l', strtotime($expensesDate));
+        $weekday = date('w', strtotime($expensesDate));
 
         // If the weekday is a weekend the expenses date is offset to fall on the following monday.
-        if ($weekday === 'Sunday') {
+        if ($weekday === '0') { // 0 == Sunday
             $expensesDate = date('Y-m-d', strtotime($expensesDate . '+1 day'));
-        } else if ($weekday === 'Saturday') {
+        } else if ($weekday === '6') { // 6 == Saturday
             $expensesDate = date('Y-m-d', strtotime($expensesDate . '+2 day'));
         }
         return $expensesDate;
@@ -88,7 +88,8 @@ class PayrollDateManager
      * @return string The month string
      */
     public function monthString(int $month) {
-        return date('F', strtotime($this->formatDate($this->year, $month, 1)));
+        $localeDate = strftime('%B', strtotime($this->formatDate($this->year, $month, 1)));
+        return $localeDate;
     }
 
 }
